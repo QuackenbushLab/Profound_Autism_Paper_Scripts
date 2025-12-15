@@ -1,4 +1,4 @@
-# Replicating Profound Autism Genomics, Transcriptomics, and Regulomics analysis.
+# Replicating Profound Autism Genomics, Transcriptomics, and Regulomics Analysis
 
 ## Basic Setup
 1. Install [R](https://www.r-project.org/).
@@ -10,7 +10,7 @@
 7. Install and setup [tensorqtl and Pgenlib](https://github.com/broadinstitute/tensorqtl).
 
 ## Accessing Data
-1.  Request access to the Simons Simplex Collection RNAseq and phenotype data (pilot and large data set) using [SFARI Base](https://base.sfari.org/).
+1.  Request access to the Simons Simplex Collection RNAseq and phenotype data (large data) using [SFARI Base](https://base.sfari.org/).
 2.  Register for a Globus account.
 3.  Request and download the phenotype data directly from SFARI Base.
 4.  Request and download the RNASeq_Large data using Globus Connect Personal. If at Harvard, these can be transferred directly to [FASRC](https://docs.rc.fas.harvard.edu/kb/globus-file-transfer/).
@@ -67,14 +67,14 @@
     - *mergedFile*: Path to the file containing the expression sample to SNP sample mapping.
     - *out_tsv*: Path to the BED file where you wish to save the gene expression data.
 4. To convert the standard difference gene expression data to BED format, run **convertDiffExpressionToBED.R**.
-    - *expr_csv*: Path to the CSV file containing logCPM expression data.
+    - *expr_csv*: Path to the CSV file containing standard difference expression data.
     - *gtf_path*: Path to the GENCODE reference file.
     - *geno_prefix*: Path (with prefix) to the PLINK results for a given PA / ASD subgroup.
     - *mergedFile*: Path to the file containing the expression sample to SNP sample mapping.
     - *out_tsv*: Path to the BED file where you wish to save the gene expression data.
 5. To format the covariates for eQTL analysis, including only samples with logCPM data, run **formatCovariatesForEQTL.R**.
     - *clinDir*: Directory where phenotype data are stored.
-    - *covar*: File where covariates (the same ones used in the GWAS) are stored.
+    - *covar*: Path to the file where covariates (the same ones used in the GWAS) are stored.
     - *mergedFile*: Path to the file containing the expression sample to SNP sample mapping.
     - *expressionBed*: Path to the BED file where the expression data are stored.
 6. To format the covariates for eQTL analysis, including only samples with standard difference data, run **formatDiffCovariatesForEQTL.R**.
@@ -127,7 +127,7 @@
 3. To generate the heat maps, run **LitmanSubgroupAnalysisAggregated.R**.
     - *sourceDir*: Source directory where the Litman gene sets are stored.
 # Consolidating Results for Supplementary Tables
-Run **MakeCompositeSuppTables_v2.R**.
+1. Run **MakeCompositeSuppTables_v2.R**.
     - *diffExprDiffDir*: Path to the directory where the linear models for the standard difference analyses are stored.
     - *diffExprRawDir*: Path to the directory where the linear models for the logCPM gene expression analyses are stored.
     - *diffVarDiffDir*: Path to the directory where the Levene's test results for the standard difference data are stored.
