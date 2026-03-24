@@ -1,6 +1,10 @@
 # Read all files containing sex and age info.
 clinDir <- "../profoundAutism/"
-clinFiles <- list.files(clinDir)
+clinFiles <- list("profoundAutismBoth_above8.csv",
+                  "profoundAutismModerateIDOnly_above8.csv",
+                  "verbalNoID_above8.csv",
+                  "verbalMildID_above8.csv",
+                  "verbalGifted_above8.csv")
 clinData <- do.call(rbind, lapply(clinFiles, function(f){
   return(read.csv(paste0(clinDir, f), header = TRUE, row.names =1))
 }))
@@ -11,7 +15,6 @@ colnames(covar) <- c("FID", "IID", paste0("PC", 1:6))
 
 # Map the samples.
 mergedFile <- "../eQTL/merged.txt"
-expressionBed <- "../eQTL/expression.pheno.profoundBoth.bed"
 map <- read.table(mergedFile, header = TRUE, check.names = FALSE, stringsAsFactors = FALSE, sep = "\t")
 clinDataSamps <- unlist(lapply(rownames(clinData), function(iid){
   val <- NA
@@ -42,20 +45,39 @@ covarNew[which(covarNew$sex == "female"), "sex"] <- "0"
 covarNew[which(covarNew$sex == "male"), "sex"] <- "1"
 covarNew$sex <- as.numeric(covarNew$sex)
 
-# Filter to include only the samples also in the BED file.
-bed <- read.table(expressionBed, sep = "\t",
-                  comment.char = "", header = TRUE, check.names = FALSE)
-shared <- intersect(colnames(bed), covarNew$IID)
-rownames(covarNew) <- covarNew$IID
-covarNew <- covarNew[shared,]
-bed <- bed[,c("#chr", "start", "end", "phenotype_id", shared)]
-
-# Remove the family ID.
-covarNew <- covarNew[,2:ncol(covarNew)]
-colnames(covarNew)[1] <- "ID"
-
-# Transpose and write.
-covarNew <- t(covarNew)
-write.table(covarNew, "../eQTL/covarNewProfoundBoth.txt", sep = "\t", quote = FALSE,
-            col.names = FALSE)
-write.table(bed, "../eQTL/expression.pheno.profoundBoth.filt.bed", sep = "\t", quote = FALSE, row.names = FALSE)
+formatCovar <- function(expressionBed, covarFile, filtBedFile){
+  # Filter to include only the samples also in the BED file.
+  bed <- read.table(expressionBed, sep = "\t",
+                    comment.char = "", header = TRUE, check.names = FALSE)
+  shared <- intersect(colnames(bed), covarNew$IID)
+  rownames(covarNew) <- covarNew$IID
+  covarNew <- covarNew[shared,]
+  bed <- bed[,c("#chr", "start", "end", "phenotype_id", shared)]
+  
+  # Remove the family ID.
+  covarNew <- covarNew[,2:ncol(covarNew)]
+  colnames(covarNew)[1] <- "ID"
+  
+  # Transpose and write.
+  covarNew <- t(covarNew)
+  str(covarNew)
+  str(bed)
+  write.table(covarNew, covarFile, sep = "\t", quote = FALSE,
+              col.names = FALSE)
+  write.table(bed, filtBedFile, sep = "\t", quote = FALSE, row.names = FALSE)
+}
+formatCovar(expressionBed = "../eQTL/expression.pheno.profoundBoth.bed",
+            covarFile = "../eQTL/covarNewProfoundBoth.txt",
+            filtBedFile = "../eQTL/expression.pheno.profoundBoth.filt.bed")
+formatCovar(expressionBed = "../eQTL/expression.pheno.profoundModerateIDOnly.bed",
+            covarFile = "../eQTL/covarNewProfoundModerateID.txt",
+            filtBedFile = "../eQTL/expression.pheno.profoundModerateID.filt.bed")
+formatCovar(expressionBed = "../eQTL/expression.pheno.verbalMildID.bed",
+            covarFile = "../eQTL/covarNewVerbalMildID.txt",
+            filtBedFile = "../eQTL/expression.pheno.verbalMildID.filt.bed")
+formatCovar(expressionBed = "../eQTL/expression.pheno.verbalNoID.bed",
+            covarFile = "../eQTL/covarNewVerbalNoID.txt",
+            filtBedFile = "../eQTL/expression.pheno.verbalNoID.filt.bed")
+formatCovar(expressionBed = "../eQTL/expression.pheno.verbalGifted.bed",
+            covarFile = "../eQTL/covarNewVerbalGifted.txt",
+            filtBedFile = "../eQTL/expression.pheno.verbalGifted.filt.bed")

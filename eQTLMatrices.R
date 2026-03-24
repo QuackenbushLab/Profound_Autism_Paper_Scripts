@@ -1,4 +1,4 @@
-# Read eQTL data.
+l# Read eQTL data.
 eQTLDir <- "../eQTL/"
 eQTLRaw <- readRDS(paste0(eQTLDir, "alleQTLResults.RDS"))
 eQTLDiff <- readRDS(paste0(eQTLDir, "alleQTLDiffResults.RDS"))
