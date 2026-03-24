@@ -58,7 +58,7 @@
    - *ref*: Path to the GENCODE reference file.
 
 ## Running eQTL Analysis
-1. To filter samples for eQTL analysis, run the following command for each PA / ASD subgroup to generate a PLINK 2 binary genotype table, filling in the items in angle brackets accordingly: ```plink2 --bfile <plink-file-path> --keep <samples-in-subgroup-file> --make-pgen --out <subgroup-file>```.
+1. To filter samples for eQTL analysis, run the following command for each PA / ASD subgroup to generate a PLINK 2 binary genotype table, filling in the items in angle brackets accordingly: ```plink2 --bfile <plink-file-path> --keep <samples-in-subgroup-file> --make-pgen --out <subgroup-file>```. Note that samples-in-subgroup-file corresponds to the 
 2. Remove the family ID from the file for compatibility, filling in the items in angle brackets accordingly: ```awk '{sub(/^[^[:space:]]+[[:space:]]*/, ""); print}' <subgroup-file>.psam > <subgroup-file-without-family-id>.psam```
 3. To convert the logCPM gene expression data to BED format, run **convertExpressionToBED.R**.
     - *expr_csv*: Path to the CSV file containing logCPM expression data.
@@ -91,6 +91,21 @@
     - *eQTLDir*: Path to eQTL results.
 11. To generate the eQTL UpSet plots, run **eQTLFigures.R**.
     - *eQTLDir*: Path to eQTL results.
+
+## Running eQTL Analysis on Randomized Subsets
+1. Run **randomSubsets.R**, changing the following variables accordingly:
+    - *paDir*: Path to the directory where the PA / ASD subgroup files are stored.
+    - *eqtlDir*: Path to the directory where eQTL inputs and results are stored.
+2. Run ```./makePgenForPLINKRand.sh <paDir> <eqtlDir> <plinkFilePath>```
+3. Run ```./removeFamilyID.sh <eqtlDir>```.
+4. Run **convertExpressionToBED_rand.R** and **convertExpressionToBED_rand_diff.R**, changing the following paths as needed:
+    - *expr_csv*: Path to the CSV file containing logCPM / pro band-specific expression data.
+    - *gtf_path*: Path to the GENCODE reference file.
+    - *geno_prefix*: Path (with prefix) to the PLINK results for a given PA / ASD subgroup.
+    - *mergedFile*: Path to the file containing the expression sample to SNP sample mapping.
+    - *out_tsv*: Path to the BED file where you wish to save the gene expression data.
+5. Run **formatCovariatesForEqtl_rand.R** and **formatDiffCovariatesForEqtl_rand.R* to format the covariates.
+6. Run **sbatch runEqtlAnalysisRand.sh** in a SLURM environment.
 
 # Running Differential Gene Expression Analysis
 1. To run the linear models for PA / ASD subgroup comparison using standard difference gene expression data, run **linearModelsDiff.R**.
