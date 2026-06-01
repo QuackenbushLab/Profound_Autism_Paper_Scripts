@@ -94,10 +94,10 @@ generateBed <- function(geno_prefix, out_tsv){
     psam <- read.table(psam_path, sep = "\t", check.names = FALSE,
                        stringsAsFactors = FALSE, header = FALSE)
     str("Found PSAM")
-    sample_ids <- psam[,2]
+    sample_ids <- psam[,1]
   } else if (file.exists(fam_path)) {
     fam <- read.table(fam_path, header = FALSE, sep = "", stringsAsFactors = FALSE)
-    sample_ids <- fam[[2]]  # IID is column 2
+    sample_ids <- fam[[1]]  # IID is column 2
   } else {
     stop("Could not find .psam or .fam for 'geno_prefix' = ", geno_prefix)
   }
@@ -115,6 +115,10 @@ generateBed <- function(geno_prefix, out_tsv){
     phenotype_id = phenotype_id,
     check.names = FALSE
   )
+  str(exprTmp)
+  str(shared)
+  str(sample_ids)
+  str(colnames(expr))
   bed <- cbind(bed, exprTmp)
   
   # sort by chrom and start (natural human order if possible)
@@ -135,7 +139,7 @@ generateBed <- function(geno_prefix, out_tsv){
   }
   bed <- bed[chr_order(bed$`#chr`), ]
   print("sorted by chrom")
-  str(bed)
+  print(dim(bed))
   # ---- 5) write, bgzip, tabix ----
   write.table(bed, file = out_tsv, sep = "\t", quote = FALSE,
               row.names = FALSE, col.names = TRUE)

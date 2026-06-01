@@ -19,7 +19,7 @@ readAllCis <- function(fpath){
 }
 cisResults <- lapply(1:10, function(i){
   cisResultsSplit <- lapply(1:2, function(j){
-    return(readAllCis(paste0(eQTLDir, "/profoundAutismBoth_rand_", i, "_", j, ".cis_qtl_pairs")))
+    return(readAllCis(paste0(eQTLDir, "/profoundAutismBoth_rand_", i, "_", j, "_diff.cis_qtl_pairs")))
   })
   names(cisResultsSplit) <- 1:2
   return(cisResultsSplit)
@@ -39,7 +39,7 @@ getAboveCutoff <- function(file){
 transResults <- lapply(1:10, function(i){
   transResultsSplit <- lapply(1:2, function(j){
     cat("*")
-    return(getAboveCutoff(file = arrow::read_parquet(paste0(eQTLDir, "/profoundAutismBoth_rand_", i, "_", j, "_trans.trans_qtl_pairs.parquet"))))
+    return(getAboveCutoff(file = arrow::read_parquet(paste0(eQTLDir, "/profoundAutismBoth_rand_", i, "_", j, "_diff_trans.trans_qtl_pairs.parquet"))))
   })
   names(transResultsSplit) <- 1:2
   return(transResultsSplit)
@@ -68,4 +68,4 @@ pairsTrans <- lapply(1:10, function(i){
 names(pairsTrans) <- 1:10
 
 saveRDS(list(pairsCis = pairsCis,
-             pairsTrans = pairsTrans), paste0(eQTLDir, "/alleQTLResultsRand.RDS"))
+             pairsTrans = pairsTrans), paste0(eQTLDir, "/alleQTLResultsRandDiff.RDS"))

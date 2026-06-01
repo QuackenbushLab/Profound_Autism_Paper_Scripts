@@ -106,6 +106,11 @@
     - *out_tsv*: Path to the BED file where you wish to save the gene expression data.
 5. Run **formatCovariatesForEqtl_rand.R** and **formatDiffCovariatesForEqtl_rand.R* to format the covariates.
 6. Run **sbatch runEqtlAnalysisRand.sh** in a SLURM environment.
+7. Run **processParquetResults_rand.R**, modifying the following:
+    - *eQTL*: Path to the eQTL results.
+8. Run **calculateJaccard_rand.R**.
+8. Run **jaccardSummaryEqtl.R**.
+
 
 # Running Differential Gene Expression Analysis
 1. To run the linear models for PA / ASD subgroup comparison using standard difference gene expression data, run **linearModelsDiff.R**.
@@ -148,5 +153,6 @@
     - *diffVarDiffDir*: Path to the directory where the Levene's test results for the standard difference data are stored.
     - *diffVarRawDir*: Path to the directory where the Levene's test results for the logCPM gne expression data are stored.
     - *litmanDir*: Path to the directory where the GSEA results for the Litman sets are stored.
+2. Run **profoundAutism_LitmanBinaryTable.R**.
     
     

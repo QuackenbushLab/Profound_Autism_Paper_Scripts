@@ -27,7 +27,7 @@ verbalMildCis <- readAllCis(paste0(eQTLDir, "/verbalMildID.cis_qtl_pairs"))
 # We use the number of phenotypes x number of variants as the upper bound for M (the number of tests).
 # Technically it is this number - the number of cis pairs filtered out, but that number
 # is negligible in comparison to the number of tests.
-M <- 4277 * 2440283
+M <- 34070 * 2440283
 getAboveCutoff <- function(file){
   ranks <- rank(file$pval, ties.method = "first")
   padj <- file$pval * (M / ranks)

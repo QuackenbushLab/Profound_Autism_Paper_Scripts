@@ -49,19 +49,25 @@ formatCovar <- function(expressionBed, covarFile, filtBedFile){
   # Filter to include only the samples also in the BED file.
   bed <- read.table(expressionBed, sep = "\t",
                     comment.char = "", header = TRUE, check.names = FALSE)
+  str(bed)
   shared <- intersect(colnames(bed), covarNew$IID)
   rownames(covarNew) <- covarNew$IID
   covarNew <- covarNew[shared,]
   bed <- bed[,c("#chr", "start", "end", "phenotype_id", shared)]
   
+  # Modify chromosome names.
+  bed[,"#chr"] <- unlist(lapply(bed[,"#chr"], function(line){
+    return(strsplit(line, split = "chr")[[1]][2])
+  }))
+  str(covarNew)
+  str(bed)
+  str(shared)
   # Remove the family ID.
   covarNew <- covarNew[,2:ncol(covarNew)]
   colnames(covarNew)[1] <- "ID"
   
   # Transpose and write.
   covarNew <- t(covarNew)
-  str(covarNew)
-  str(bed)
   write.table(covarNew, covarFile, sep = "\t", quote = FALSE,
               col.names = FALSE)
   write.table(bed, filtBedFile, sep = "\t", quote = FALSE, row.names = FALSE)
