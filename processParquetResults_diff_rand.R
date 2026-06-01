@@ -4,7 +4,7 @@ if(!require("arrow")){
 library("arrow")
 
 # Read files.
-eQTLDir <- "../eQTL"
+eQTLDir <- NULL
 cutoff <- 0.05
 readAllCis <- function(fpath){
   chroms <- c(as.character(1:22), "X", "Y")

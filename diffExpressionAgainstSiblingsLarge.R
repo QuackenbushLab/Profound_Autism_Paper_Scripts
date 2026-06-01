@@ -1,5 +1,5 @@
 # Read the data.
-sourceDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/"
+sourceDir <- NULL
 large <- read.csv(paste0(sourceDir, "geneExpressionLogCPMLarge.csv"),
                   row.names = 1)
 

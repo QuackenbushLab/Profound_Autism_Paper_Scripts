@@ -1,5 +1,5 @@
 # Read SSC data.
-phenoGrp <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/phenotypeGroups/"
+phenoGrp <- NULL
 profoundAutismModerateIDOnly <- read.csv(paste0(phenoGrp, "/profoundAutismModerateIDOnly_above8.csv"), row.names = 1)
 profoundAutismNonverbalOnly <- read.csv(paste0(phenoGrp, "/profoundAutismNonverbalOnly_above8.csv"), row.names = 1)
 profoundAutismBoth <- read.csv(paste0(phenoGrp, "/profoundAutismBoth_above8.csv"), row.names = 1)
@@ -8,7 +8,7 @@ verbalNoID <- read.csv(paste0(phenoGrp, "/verbalNoID_above8.csv"), row.names = 1
 verbalGifted <- read.csv(paste0(phenoGrp, "/verbalGifted_above8.csv"), row.names = 1)
 
 # Split genomics data.
-sourceDirGenomics <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/"
+sourceDirGenomics <- NULL
 genomics <- read.csv(paste0(sourceDirGenomics, "gene_expression_processed/geneExpressionLogCPMLarge.csv"),
                      row.names = 1)
 # Split data into families.

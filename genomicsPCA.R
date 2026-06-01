@@ -1,5 +1,5 @@
 # Read SSC data.
-outDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/phenotypeGroups/"
+outDir <- NULL
 
 # Set colors.
 bothCol <- rgb(red = 175 / 255, blue = 0 / 255, green = 93 / 255, alpha = 0.5)
@@ -18,7 +18,7 @@ verbalNoID <- read.csv(paste0(outDir, "/verbalNoID_above8.csv"), row.names = 1)
 verbalGifted <- read.csv(paste0(outDir, "/verbalGifted_above8.csv"), row.names = 1)
 
 # Read split genomics data.
-genomicsDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/geneExpressionSubsets/"
+genomicsDir <- NULL
 splitGenomicsProfoundBoth <- read.csv(paste0(genomicsDir, "geneExpressionBoth.csv"), row.names = 1)
 splitGenomicsProfoundModerateIDOnly <- read.csv(paste0(genomicsDir, "geneExpressionModerateID.csv"), row.names = 1)
 splitGenomicsProfoundNonverbalOnly <- read.csv(paste0(genomicsDir, "geneExpressionNonverbal.csv"), row.names = 1)

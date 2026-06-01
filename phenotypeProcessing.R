@@ -1,5 +1,5 @@
-phenotypeDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/SSC\ Version\ 15.3\ Phenotype\ Dataset/Proband\ Data/"
-outDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism"
+phenotypeDir <- NULL
+outDir <- NULL
 ssc <- read.csv(paste0(phenotypeDir, "ssc_core_descriptive.csv"), row.names = 1)
 ados1 <- read.csv(paste0(phenotypeDir, "ados_1.csv"), row.names = 1)
 ados2 <- read.csv(paste0(phenotypeDir, "ados_2.csv"), row.names = 1)

@@ -1,6 +1,6 @@
 # Read in the profound autism (both) file.
-paDir <- "/n/holylabs/LABS/quackenbush_lab/Lab/teicher/profoundAutism/"
-eqtlDir <- "/n/holylabs/LABS/quackenbush_lab/Lab/teicher/eQTL/"
+paDir <- NULL
+eqtlDir <- NULL
 paData <- read.csv(paste0(paDir, "profoundAutismBoth_above8.csv"), row.names = 1)
 paSamps <- row.names(paData)
 merged <- read.table(paste0(eqtlDir, "merged.txt"), sep = "\t", header = TRUE)

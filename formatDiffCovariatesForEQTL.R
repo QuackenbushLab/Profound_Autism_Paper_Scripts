@@ -1,20 +1,23 @@
 # Read all files containing sex, sibling sex, and age info.
-clinFiles <- list.files("../profoundAutism/")
+clinDir <- NULL
+clinFiles <- list.files(clinDir)
 clinData <- do.call(rbind, lapply(clinFiles, function(f){
-  return(read.csv(paste0("../profoundAutism/", f), header = TRUE, row.names =1))
+  return(read.csv(paste0(clinDir, f), header = TRUE, row.names =1))
 }))
-siblingData <- read.csv("../profoundAutism/sibling.csv",
+siblingData <- read.csv(paste0(clinDir, "/sibling.csv"),
                         row.names = 1)
 rownames(siblingData) <- unlist(lapply(rownames(siblingData), function(row){
   return(paste0(strsplit(row, ".s1")[[1]][1], ".p1"))
 }))
 
 # Read current covariate file.
-covar <- read.table("../PLINK/Omni_covar_2.txt", sep = " ")
+covarFile <- NULL
+covar <- read.table(covarFile, sep = " ")
 colnames(covar) <- c("FID", "IID", paste0("PC", 1:6))
 
 # Map the samples.
-map <- read.table("../eQTL/merged.txt", header = TRUE, check.names = FALSE, stringsAsFactors = FALSE, sep = "\t")
+mergedFile <- NULL
+map <- read.table(mergedFile, header = TRUE, check.names = FALSE, stringsAsFactors = FALSE, sep = "\t")
 clinDataSamps <- unlist(lapply(rownames(clinData), function(iid){
   val <- NA
   if(length(which(map$individual_id == iid)) > 0){
@@ -56,7 +59,8 @@ covarNew$sex <- as.numeric(covarNew$sex)
 covarNew$siblingSex <- as.numeric(covarNew$siblingSex)
 
 # Filter to include only the samples also in the BED file.
-bed <- read.table("../eQTL/diffExpression.pheno.profoundBoth.bed", sep = "\t",
+expressionBed <- NULL
+bed <- read.table(expressionBed, sep = "\t",
                   comment.char = "", header = TRUE, check.names = FALSE)
 shared <- intersect(colnames(bed), covarNew$IID)
 rownames(covarNew) <- covarNew$IID
@@ -69,6 +73,8 @@ colnames(covarNew)[1] <- "ID"
 
 # Transpose and write.
 covarNew <- t(covarNew)
-write.table(covarNew, "../eQTL/covarNewProfoundBothDiff.txt", sep = "\t", quote = FALSE,
+covarNewOut <- NULL
+expressionBedNewOut <- NULL
+write.table(covarNew, covarNewOut, sep = "\t", quote = FALSE,
             col.names = FALSE)
-write.table(bed, "../eQTL/diffExpression.pheno.profoundBoth.filt.bed", sep = "\t", quote = FALSE, row.names = FALSE)
+write.table(bed, expressionBedNewOut, sep = "\t", quote = FALSE, row.names = FALSE)

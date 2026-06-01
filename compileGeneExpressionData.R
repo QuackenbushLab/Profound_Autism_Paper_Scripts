@@ -3,11 +3,11 @@ library(limma)
 library(rtracklayer)
 
 # Find all directories containing expression files.
-expressionDirLarge <- "/n/quackenbush_lab/Lab/teicher/RNASeq_Large/SSC/objLinks/seqLib/"
+expressionDir <- NULL
 
 # Loop through all directories and files on the system, read in the gene counts
 # as txt, and compile them.
-dirsInLarge <- list.dirs(expressionDirLarge, recursive = FALSE)
+dirsInLarge <- list.dirs(expressionDir, recursive = FALSE)
 geneExpressionLarge <- do.call(cbind, lapply(dirsInLarge, function(directory){
   cat(".")
   fileIn <- read.table(paste0(directory, 
@@ -19,8 +19,8 @@ geneExpressionLarge <- do.call(cbind, lapply(dirsInLarge, function(directory){
   rownames(expression) <- fileIn[,1]
   return(expression)
 }))
-write.csv(geneExpressionLarge, paste0(expressionDirLarge, "geneExpressionRaw.csv"))
+write.csv(geneExpressionLarge, paste0(expressionDir, "geneExpressionRaw.csv"))
 
 # Use VOOM to transform the data.
 geneExpressionLogCPMLarge <- as.matrix(voom(geneExpressionLarge))
-write.csv(geneExpressionLogCPMLarge, paste0(expressionDirLarge, "geneExpressionLogCPM.csv"))
+write.csv(geneExpressionLogCPMLarge, paste0(expressionDir, "geneExpressionLogCPM.csv"))

@@ -1,14 +1,7 @@
 # ---- user inputs ----
-expr_csv   <- "../diffExpression.csv"  # genes x samples
-gtf_path   <- "gencode.v49.basic.annotation.gtf"                             # e.g., GENCODE/GTF
-#geno_prefix<- "../PLINK/Omni2.5/SSC_Omni2.5.profoundAll"  # .psam or .fam next to it
-#geno_prefix <- "../PLINK/Omni2.5/SSC_Omni2.5.notProfoundAll"
-#geno_prefix <- "../PLINK/Omni2.5/SSC_Omni2.5.profoundBoth"
-#geno_prefix <- "../PLINK/Omni2.5/SSC_Omni2.5.profoundNonverbalOnly"
-#geno_prefix <- "../PLINK/Omni2.5/SSC_Omni2.5.profoundModerateIDOnly"
-#geno_prefix <- "../PLINK/Omni2.5/SSC_Omni2.5.verbalGifted"
-#geno_prefix <- "../PLINK/Omni2.5/SSC_Omni2.5.verbalMildID"
-geno_prefix <- "../PLINK/Omni2.5/SSC_Omni2.5.verbalNoID"
+expr_csv   <- NULL  # genes x samples
+gtf_path   <- NULL                            # e.g., GENCODE/GTF
+geno_prefix <- NULL
 use_tss    <- FALSE   # TRUE = 1bp TSS; FALSE = full gene body
 keep_chr_prefix <- FALSE  # set TRUE if your VCF/PLINK uses "chr1" etc.
 
@@ -167,14 +160,7 @@ bed <- bed[chr_order(bed$`#chr`), ]
 print("sorted by chrom")
 str(bed)
 # ---- 5) write, bgzip, tabix ----
-#out_tsv <- "../eQTL/expression.pheno.profoundAllDiff.bed"
-#out_tsv <- "../eQTL/expression.pheno.notProfoundAllDiff.bed"
-#out_tsv <- "../eQTL/expression.pheno.profoundBothDiff.bed"
-#out_tsv <- "../eQTL/expression.pheno.profoundNonverbalOnlyDiff.bed"
-#out_tsv <- "../eQTL/expression.pheno.profoundModerateIDOnlyDiff.bed"
-#out_tsv <- "../eQTL/expression.pheno.verbalGiftedDiff.bed"
-#out_tsv <- "../eQTL/expression.pheno.verbalMildIDDiff.bed"
-out_tsv <- "../eQTL/expression.pheno.verbalNoIDDiff.bed"
+out_tsv <- NULL
 write.table(bed, file = out_tsv, sep = "\t", quote = FALSE,
             row.names = FALSE, col.names = TRUE)
 print("wrote")

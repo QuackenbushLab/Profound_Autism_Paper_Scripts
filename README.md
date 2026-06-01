@@ -25,26 +25,26 @@
     - *outDir*: The directory where the phenotype groups are stored.
 3. To compile and normalize gene expression data, run **compileGeneExpressionData.R**.
     - *expressionDir*: The directory where the expression data files are stored.
-4. To compute the standard difference in gene expression between probands and non-autistic siblings, run **diffExpressionAgainstSiblingsLarge.R**.
+4. To compute logCPM_PSE, run **diffExpressionAgainstSiblingsLarge.R**.
     - *sourceDir*: The directory where the expression data files are stored.
-5. To subset the gene expression data for each PA and ASD subgroup, run **splitExpressionBySubgroup.R**.
+5. To subset the logCPM gene expression data for each PA and ASD subgroup, run **splitExpressionBySubgroup.R**.
     - *phenoGrp*: The directory where the phenotype groups (generated in step 1) are stored.
     - *sourceDirGenomics*: The directory where the logCPM gene expression matrix is stored.
-6. To subset the standard difference in gene expression for each PA and ASD subgroup, run **splitDiffExpressionBySubgroup.R**.
+6. To subset the logCPM_PSE for each PA and ASD subgroup, run **splitDiffExpressionBySubgroup.R**.
     - *phenoGrp*: The directory where the phenotype groups (generated in step 1) are stored.
     - *sourceDirGenomics*: The directory where the standard difference in gene expression matrix is stored.
 
-## Computing Separability Along Axes of Variation
-1. To run PCA on the logCPM data and perform a Wilcoxon rank-sum test on each PC, run **genomicsPCA.R**. This will also generate Supplementary Figure 1.
-    - *outDir*: The directory where the phenotype groups (generated in step 1) are stored.
+## Computing Separability Along Eigengenes
+1. To run PCA on the logCPM data and perform a Wilcoxon rank-sum test on each PC, run **genomicsPCA.R**.
+    - *outDir*: The directory where the phenotype groups are stored.
     - *genomicsDir*: The directory where the gene expression matrix is stored.
-2. To run PCA on the standard difference data and perform a Wilcoxon rank-sum test on each PC, run **genomicsDiffPCA.R**. This will also generate Figure 2.
-    - *outDir*: The directory where the phenotype groups (generated in step 1) are stored.
+2. To run PCA on the logCPM_PSE data and perform a Wilcoxon rank-sum test on each PC, run **genomicsDiffPCA.R**.
+    - *outDir*: The directory where the phenotype groups are stored.
     - *genomicsDir*: The directory where the standard difference in gene expression matrix is stored.
 
 ## Running GWAS
 1. To calculate the first 50 PCs from the SNP data, run the following command with the files in the angle brackets specified accordingly: ```plink2 --pca 50 --bfile <plink-file-path> --out <pca-file-path> --maf 0.05```.
-2. To generate the PCA elbow plot (Supplementary Figure 2), run **summarizeEigenvaluesGeneVariantPCA.R**.
+2. To generate the PCA elbow plot, run **summarizeEigenvaluesGeneVariantPCA.R**.
     - *inDir*: The directory where the PLINK PCA was saved (pca-file-path).
 3. To remove the header from the eigenvector file, run the following command, filling in the items in angle brackets accordingly: (**pca-eigenvector-file** should have been generated in step 1): ```awk 'NR > 1' <pca-eigenvector-file> <pca-eigenvector-file-without-header>```
 4. To format the PCs as covariates for input to PLINK, run the following command, filling in the items in angle brackets accordingly: ```awk '{print $1, $2, $3, $4, $5}' <pca-eigenvector-file-without-header> > <covariate-file>```
@@ -55,7 +55,7 @@
 8. To map the SNPs to genes, run the following command, filling in the items in angle brackets accordingly: ```gtf2bed < <gtf-gencode-file> > <bed-gencode-file>```.
 7. To generate an UpSet plot of the overlapping SNPs (Figure 3) and map the SNPs to genes, run **GWAS_figure_pcs.R**.
    - *sourceDir*: The directory where the PLINK results are stored.
-   - *ref*: Path to the GENCODE reference file.
+   - *refFile*: Path to the GENCODE reference file.
 
 ## Running eQTL Analysis
 1. To filter samples for eQTL analysis, run the following command for each PA / ASD subgroup to generate a PLINK 2 binary genotype table, filling in the items in angle brackets accordingly: ```plink2 --bfile <plink-file-path> --keep <samples-in-subgroup-file> --make-pgen --out <subgroup-file>```. Note that samples-in-subgroup-file corresponds to the 
@@ -63,28 +63,33 @@
 3. To convert the logCPM gene expression data to BED format, run **convertExpressionToBED.R**.
     - *expr_csv*: Path to the CSV file containing logCPM expression data.
     - *gtf_path*: Path to the GENCODE reference file.
-    - *geno_prefix*: Path (with prefix) to the PLINK results for a given PA / ASD subgroup.
+    - *geno_prefix*: Path (with prefix) to the PLINK results.
     - *mergedFile*: Path to the file containing the expression sample to SNP sample mapping.
-    - *out_tsv*: Path to the BED file where you wish to save the gene expression data.
-4. To convert the standard difference gene expression data to BED format, run **convertDiffExpressionToBED.R**.
+    - *out_tsv*: Path to the directory where you wish to save the gene expression BED file.
+4. To convert the logCPM_PSE expression data to BED format, run **convertDiffExpressionToBED.R** for each phenotype group.
     - *expr_csv*: Path to the CSV file containing standard difference expression data.
     - *gtf_path*: Path to the GENCODE reference file.
-    - *geno_prefix*: Path (with prefix) to the PLINK results for a given PA / ASD subgroup.
+    - *geno_prefix*: Path (with prefix) to the PLINK results for the phenotype group.
     - *mergedFile*: Path to the file containing the expression sample to SNP sample mapping.
-    - *out_tsv*: Path to the BED file where you wish to save the gene expression data.
+    - *out_tsv*: Path to the directory where you wish to store the gene expression BED file for the phenotype group.
 5. To format the covariates for eQTL analysis, including only samples with logCPM data, run **formatCovariatesForEQTL.R**.
     - *clinDir*: Directory where phenotype data are stored.
-    - *covar*: Path to the file where covariates (the same ones used in the GWAS) are stored.
+    - *covarFile*: Path to the file where covariates (the same ones used in the GWAS) are stored.
     - *mergedFile*: Path to the file containing the expression sample to SNP sample mapping.
     - *expressionBed*: Path to the BED file where the expression data are stored.
-6. To format the covariates for eQTL analysis, including only samples with standard difference data, run **formatDiffCovariatesForEQTL.R**.
+6. To format the covariates for eQTL analysis, including only samples with standard difference data, run **formatDiffCovariatesForEQTL.R**, for each phenotype group.
     - *clinDir*: Directory where phenotype data are stored.
-    - *covar*: File where covariates (the same ones used in the GWAS) are stored.
+    - *covarFile*: File where covariates (the same ones used in the GWAS) are stored.
     - *mergedFile*: Path to the file containing the expression sample to SNP sample mapping.
     - *expressionBed*: Path to the BED file where the expression data are stored.
+    - *covarNewOut*: File where the newly formatted covariates should be stored.
+    - *expressionBedNewOut*: File where the newly formatted expression BED file should be stored.
 7. To compute cis-eQTLs for each PA / ASD subgroup, run the following command, filling in the items in angle brackets accordingly: ```python3 -m tensorqtl --covariates <eqtl-covariate-file> --mode cis_nominal <subgroup-file-path> <gene-expression-bed-file> <subgroup-result-file>```
 8. To compute trans-eQTLs for each PA / ASD subgroup, run the following command, filling in the items in angle brackets accordingly: ```python3 -m tensorqtl --covariates <eqtl-covariate-file> --mode trans <subgroup-file-path> <gene-expression-bed-file> <subgroup-result-file>```
-9. To combine all cis-and-trans-eQTL results, run **processParquetResults.R**.
+9. To combine all cis-and-trans-eQTL results from logCPM data, run **processParquetResults.R**.
+    - *eQTLDir*: Path to directory where eQTL results are stored (subgroup-result-file).
+    - *cutoff*: Cutoff for significance.
+9. To combine all cis-and-trans-eQTL results from logCPM_PSE data, run **processParquetResultsDiff.R**.
     - *eQTLDir*: Path to directory where eQTL results are stored (subgroup-result-file).
     - *cutoff*: Cutoff for significance.
 10. To generate combination matrices for eQTL UpSet plots, run **eQTLMatrices.R**.
@@ -101,12 +106,12 @@
 4. Run **convertExpressionToBED_rand.R** and **convertExpressionToBED_rand_diff.R**, changing the following paths as needed:
     - *expr_csv*: Path to the CSV file containing logCPM / pro band-specific expression data.
     - *gtf_path*: Path to the GENCODE reference file.
-    - *geno_prefix*: Path (with prefix) to the PLINK results for a given PA / ASD subgroup.
+    - *geno_prefix_dir*: Path (with prefix) to the PLINK results for a given PA / ASD subgroup.
     - *mergedFile*: Path to the file containing the expression sample to SNP sample mapping.
-    - *out_tsv*: Path to the BED file where you wish to save the gene expression data.
+    - *out_tsv_dir*: Path to the BED file where you wish to save the gene expression data.
 5. Run **formatCovariatesForEqtl_rand.R** and **formatDiffCovariatesForEqtl_rand.R* to format the covariates.
 6. Run **sbatch runEqtlAnalysisRand.sh** in a SLURM environment.
-7. Run **processParquetResults_rand.R**, modifying the following:
+7. Run **processParquetResults_rand.R** and **processParquetResults_diff_rand.R**, modifying the following:
     - *eQTL*: Path to the eQTL results.
 8. Run **calculateJaccard_rand.R**.
 8. Run **jaccardSummaryEqtl.R**.

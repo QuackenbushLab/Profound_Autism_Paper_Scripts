@@ -1,5 +1,5 @@
 # Read in PLINK results with covariates.
-sourceDir <- "../PLINK/resultFiles/"
+sourceDir <- NULL
 
 # Find significant SNPs.
 findSignificant <- function(fileName){

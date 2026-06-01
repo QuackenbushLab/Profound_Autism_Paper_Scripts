@@ -1,5 +1,5 @@
 # Calculate and save percent variance.
-inDir <- "/n/holylabs/LABS/quackenbush_lab/Lab/teicher/PLINK/resultFiles"
+inDir <- NULL
 eigenvals <- read.csv(paste0(inDir, "/omniPCA.eigenval"), header = FALSE)
 eigenvals$percentVariance <- (eigenvals$V1 / sum(eigenvals$V1)) * 100
 write.csv(eigenvals, paste0(inDir, "/omniPCA.eigenval.withVariance.csv"))

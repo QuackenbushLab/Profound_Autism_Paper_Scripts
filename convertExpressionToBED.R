@@ -1,7 +1,9 @@
 # ---- user inputs ----
-expr_csv   <- "../geneExpressionLogCPMLarge.csv"  # genes x samples
-gtf_path   <- "gencode.v49.basic.annotation.gtf"   
-mergedFile <- "../eQTL/merged.txt"
+expr_csv   <- NULL  # genes x samples
+gtf_path   <- NULL   
+mergedFile <- NULL
+geno_prefix <- NULL
+out_tsv <- NULL
 map <- read.table(mergedFile, sep = "\t", header = TRUE)
 suppressPackageStartupMessages({
   library(rtracklayer)  # to read GTF
@@ -145,13 +147,13 @@ generateBed <- function(geno_prefix, out_tsv){
               row.names = FALSE, col.names = TRUE)
   print("wrote")
 }
-generateBed(geno_prefix = "../PLINK/Omni2.5/SSC_Omni2.5.profoundBoth",
-            out_tsv = "../eQTL/expression.pheno.profoundBoth.bed")
-generateBed(geno_prefix = "../PLINK/Omni2.5/SSC_Omni2.5.profoundModerateIDOnly",
-            out_tsv = "../eQTL/expression.pheno.profoundModerateIDOnly.bed")
-generateBed(geno_prefix = "../PLINK/Omni2.5/SSC_Omni2.5.verbalMildID",
-            out_tsv = "../eQTL/expression.pheno.verbalMildID.bed")
-generateBed(geno_prefix = "../PLINK/Omni2.5/SSC_Omni2.5.verbalNoID",
-            out_tsv = "../eQTL/expression.pheno.verbalNoID.bed")
-generateBed(geno_prefix = "../PLINK/Omni2.5/SSC_Omni2.5.verbalGifted",
-            out_tsv = "../eQTL/expression.pheno.verbalGifted.bed")
+generateBed(geno_prefix = paste0(geno_prefix, "/SSC_Omni2.5.profoundBoth"),
+            out_tsv = paste0(out_tsv, "/expression.pheno.profoundBoth.bed"))
+generateBed(geno_prefix = paste0(geno_prefix, "/SSC_Omni2.5.profoundModerateIDOnly"),
+            out_tsv = paste0(out_tsv, "/expression.pheno.profoundModerateIDOnly.bed"))
+generateBed(geno_prefix = paste0(geno_prefix, "/SSC_Omni2.5.verbalMildID"),
+            out_tsv = paste0(out_tsv, "/expression.pheno.verbalMildID.bed"))
+generateBed(geno_prefix = paste0(geno_prefix, "/SSC_Omni2.5.verbalNoID"),
+            out_tsv = paste0(out_tsv, "/expression.pheno.verbalNoID.bed"))
+generateBed(geno_prefix = paste0(geno_prefix, "/SSC_Omni2.5.verbalGifted"),
+            out_tsv = paste0(out_tsv, "/expression.pheno.verbalGifted.bed"))

@@ -1,10 +1,8 @@
-# Do original supplementary tables 20-55 (the differential expression)
-
-diffExprDiffDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/diffGeneExpression_ageBinned/"
-diffExprRawDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/geneExpression_ageBinnedModels/"
-diffVarRawDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/diffGeneExpressionVariance/"
-diffVarDiffDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/geneExpressionVariance/"
-litmanDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/Litman_gene_sets/litmanGSEA_lm/"
+diffExprDiffDir <- NULL
+diffExprRawDir <- NULL
+diffVarRawDir <- NULL
+diffVarDiffDir <- NULL
+litmanDir <- NULL
 
 bothGiftedRaw <- read.csv(paste0(diffExprRawDir, "profoundBoth_GiftedVerbal.csv"), row.names = 1)
 bothMildRaw <- read.csv(paste0(diffExprRawDir, "profoundBoth_MildIDVerbal.csv"), row.names = 1)

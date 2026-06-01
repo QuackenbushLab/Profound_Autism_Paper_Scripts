@@ -1,7 +1,7 @@
 library("ComplexHeatmap")
 
 # Read eQTL data.
-eQTLDir <- "../eQTL/"
+eQTLDir <- NULL
 eQTLRawComb <- readRDS(paste0(eQTLDir, "eQTLMatCis.csv_comb.RDS"))
 eQTLDiff <- readRDS(paste0(eQTLDir, "eQTLDiffMatCis.csv_comb.RDS"))
 combs <- normalize_comb_mat(list(eQTLRawComb, eQTLDiff))

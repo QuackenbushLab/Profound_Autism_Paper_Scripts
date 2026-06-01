@@ -1,7 +1,7 @@
 # ---- user inputs ----
-expr_csv   <- "../geneExpressionLogCPMLarge.csv"  # genes x samples
-gtf_path   <- "gencode.v49.basic.annotation.gtf"   
-mergedFile <- "../eQTL/merged.txt"
+expr_csv   <- NULL  # genes x samples
+gtf_path   <- NULL   
+mergedFile <- NULL
 map <- read.table(mergedFile, sep = "\t", header = TRUE)
 suppressPackageStartupMessages({
   library(rtracklayer)  # to read GTF
@@ -85,10 +85,12 @@ print("Region")
 # phenotype_id = the same IDs you matched by
 phenotype_id <- df_anno$gene_key
 
+geno_prefix_dir <- NULL
+out_tsv_dir <- NULL
 for(i in 1:10){
   for(j in 1:2){                          # e.g., GENCODE/GTF
-    geno_prefix <- paste0("../eQTL/profoundAutismBoth_rand_", i, "_", j)
-    out_tsv <- paste0("../eQTL/expression.pheno.profoundBoth_", i, "_", j, ".bed")
+    geno_prefix <- paste0(geno_prefix_dir, "_rand_", i, "_", j)
+    out_tsv <- paste0(out_tsv_dir, "_", i, "_", j, ".bed")
     
     # ---- 3) reorder expression columns to match genotype sample order ----
     psam_path <- paste0(geno_prefix, ".psam")

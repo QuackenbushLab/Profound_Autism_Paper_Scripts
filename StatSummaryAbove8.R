@@ -1,9 +1,9 @@
 # Read SSC data.
-phenotypeDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/SSC\ Version\ 15.3\ Phenotype\ Dataset/Proband\ Data/"
+phenotypeDir <- NULL
 ssc <- read.csv(paste0(phenotypeDir, "ssc_core_descriptive.csv"), row.names = 1)
 
 # Read subgroups.
-outDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/phenotypeGroups/"
+outDir <- NULL
 profoundAutismSSC <- read.csv(paste0(outDir, "/profoundAutism_SSC.csv"), row.names = 1, stringsAsFactors = TRUE)
 moderateToSevereVerbalSSC <- read.csv(paste0(outDir, "/moderateToSevereIDVerbal_SSC.csv"), row.names = 1, stringsAsFactors = TRUE)
 nonverbalMildIDSSC <- read.csv(paste0(outDir, "/mildIDnonverbal_SSC.csv"), row.names = 1, stringsAsFactors = TRUE)

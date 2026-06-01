@@ -1,5 +1,6 @@
 # Read all files containing sex and age info.
-clinDir <- "../profoundAutism/"
+clinDir <- NULL
+expressionBed <- NULL
 clinFiles <- list("profoundAutismBoth_above8.csv",
                   "profoundAutismModerateIDOnly_above8.csv",
                   "verbalNoID_above8.csv",
@@ -10,11 +11,12 @@ clinData <- do.call(rbind, lapply(clinFiles, function(f){
 }))
 
 # Read current covariate file.
-covar <- read.table("../PLINK/Omni_covar_2.txt", sep = " ")
+covarFile <- NULL
+covar <- read.table(covarFile, sep = " ")
 colnames(covar) <- c("FID", "IID", paste0("PC", 1:6))
 
 # Map the samples.
-mergedFile <- "../eQTL/merged.txt"
+mergedFile <- NULL
 map <- read.table(mergedFile, header = TRUE, check.names = FALSE, stringsAsFactors = FALSE, sep = "\t")
 clinDataSamps <- unlist(lapply(rownames(clinData), function(iid){
   val <- NA
@@ -72,18 +74,18 @@ formatCovar <- function(expressionBed, covarFile, filtBedFile){
               col.names = FALSE)
   write.table(bed, filtBedFile, sep = "\t", quote = FALSE, row.names = FALSE)
 }
-formatCovar(expressionBed = "../eQTL/expression.pheno.profoundBoth.bed",
-            covarFile = "../eQTL/covarNewProfoundBoth.txt",
-            filtBedFile = "../eQTL/expression.pheno.profoundBoth.filt.bed")
-formatCovar(expressionBed = "../eQTL/expression.pheno.profoundModerateIDOnly.bed",
-            covarFile = "../eQTL/covarNewProfoundModerateID.txt",
-            filtBedFile = "../eQTL/expression.pheno.profoundModerateID.filt.bed")
-formatCovar(expressionBed = "../eQTL/expression.pheno.verbalMildID.bed",
-            covarFile = "../eQTL/covarNewVerbalMildID.txt",
-            filtBedFile = "../eQTL/expression.pheno.verbalMildID.filt.bed")
-formatCovar(expressionBed = "../eQTL/expression.pheno.verbalNoID.bed",
-            covarFile = "../eQTL/covarNewVerbalNoID.txt",
-            filtBedFile = "../eQTL/expression.pheno.verbalNoID.filt.bed")
-formatCovar(expressionBed = "../eQTL/expression.pheno.verbalGifted.bed",
-            covarFile = "../eQTL/covarNewVerbalGifted.txt",
-            filtBedFile = "../eQTL/expression.pheno.verbalGifted.filt.bed")
+formatCovar(expressionBed = paste0(expressionBed, "/expression.pheno.profoundBoth.bed"),
+            covarFile = paste0(expressionBed, "/covarNewProfoundBoth.txt"),
+            filtBedFile = paste0(expressionBed, "/expression.pheno.profoundBoth.filt.bed"))
+formatCovar(expressionBed = paste0(expressionBed, "/expression.pheno.profoundModerateIDOnly.bed"),
+            covarFile = paste0(expressionBed, "/covarNewProfoundModerateID.txt"),
+            filtBedFile = paste0(expressionBed, "/expression.pheno.profoundModerateID.filt.bed"))
+formatCovar(expressionBed = paste0(expressionBed, "/expression.pheno.verbalMildID.bed"),
+            covarFile = paste0(expressionBed, "/covarNewVerbalMildID.txt"),
+            filtBedFile = paste0(expressionBed, "/expression.pheno.verbalMildID.filt.bed"))
+formatCovar(expressionBed = paste0(expressionBed, "/expression.pheno.verbalNoID.bed"),
+            covarFile = paste0(expressionBed, "/covarNewVerbalNoID.txt"),
+            filtBedFile = paste0(expressionBed, "/expression.pheno.verbalNoID.filt.bed"))
+formatCovar(expressionBed = paste0(expressionBed, "/expression.pheno.verbalGifted.bed"),
+            covarFile = paste0(expressionBed, "/covarNewVerbalGifted.txt"),
+            filtBedFile = paste0(expressionBed, "/expression.pheno.verbalGifted.filt.bed"))

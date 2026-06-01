@@ -2,8 +2,8 @@ library("fgsea")
 library("org.Hs.eg.db")
 
 # Paths
-msigdbPath <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/Tomi/c2.cp.v2023.2.Hs.symbols.gmt"
-diffExpressionPath <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/"
+msigdbPath <- NULL
+diffExpressionPath <- NULL
 # Read in the MSigDB pathways.
 msigdb <- gmtPathways(msigdbPath)
 

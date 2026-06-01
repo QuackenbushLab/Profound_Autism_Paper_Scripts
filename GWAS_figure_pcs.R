@@ -1,7 +1,8 @@
-sourceDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/plinkResults/"
+sourceDir <- NULL
+refFile <- NULL
 # Read in the reference.
 library(data.table)
-ref <- fread("/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/gencode.v49.annotation.bed")
+ref <- fread(refFile)
 
 # Read in the GWAS results.
 profoundAll <- read.csv(paste0(sourceDir, "profoundAll_noSex_pcs.PHENO1.glm.logistic.hybrid.sig"), row.names = 1)

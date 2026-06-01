@@ -1,6 +1,7 @@
 # Read data.
-sourceDirGenomics <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/large_results/"
-phenoGrp <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/phenotypeGroups/"
+sourceDirGenomics <- NULL
+phenoGrp <- NULL
+outDirFinal <- NULL
 profoundAutismModerateIDOnly <- read.csv(paste0(phenoGrp, "/profoundAutismModerateIDOnly_above8.csv"), row.names = 1)
 profoundAutismNonverbalOnly <- read.csv(paste0(phenoGrp, "/profoundAutismNonverbalOnly_above8.csv"), row.names = 1)
 profoundAutismBoth <- read.csv(paste0(phenoGrp, "/profoundAutismBoth_above8.csv"), row.names = 1)
@@ -20,7 +21,6 @@ splitGenomicsGiftedVerbal <- read.csv(paste0(sourceDirGenomics, "/splitGenomicsG
 formulaAll <- "gene ~ subtype + sex + race + ethnicity + age8_10 + age10_12 + age12_14 + age14_16 + age16_18"
 
 # Run linear models.
-outDirFinal <- paste0(outDir, "/geneExpression_ageBinnedModels/")
 dir.create(outDirFinal)
 # Do the comparisons for IQ-related, speech-related, and intersectional relationships.
 runLinearModels <- function(sscGroup1, sscGroup2, genomicsGroup1, genomicsGroup2, 
