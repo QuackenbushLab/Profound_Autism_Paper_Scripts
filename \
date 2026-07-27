@@ -41,9 +41,6 @@
 2. To run PCA on the logCPM_PSE data and perform a Wilcoxon rank-sum test on each PC, run **genomicsDiffPCA.R**.
     - *outDir*: The directory where the phenotype groups are stored.
     - *genomicsDir*: The directory where the standard difference in gene expression matrix is stored.
-    - *siblingDir*: The directory where the sibling phenotype data are stored.
-    - *inDirPCA*: The directory where PCA data should be stored.
-    - *outDirPCA*: The directory where the Wilcoxon test results should be stored.
 
 ## Running GWAS
 1. To calculate the first 50 PCs from the SNP data, run the following command with the files in the angle brackets specified accordingly: ```plink2 --pca 50 --bfile <plink-file-path> --out <pca-file-path> --maf 0.05```.
@@ -85,14 +82,9 @@
     - *covarFile*: File where covariates (the same ones used in the GWAS) are stored.
     - *mergedFile*: Path to the file containing the expression sample to SNP sample mapping.
     - *expressionBed*: Path to the BED file where the expression data are stored.
-    - *covarNewOut*: File where the newly formatted covariates should be stored.
-    - *expressionBedNewOut*: File where the newly formatted expression BED file should be stored.
 7. To compute cis-eQTLs for each PA / ASD subgroup, run the following command, filling in the items in angle brackets accordingly: ```python3 -m tensorqtl --covariates <eqtl-covariate-file> --mode cis_nominal <subgroup-file-path> <gene-expression-bed-file> <subgroup-result-file>```
 8. To compute trans-eQTLs for each PA / ASD subgroup, run the following command, filling in the items in angle brackets accordingly: ```python3 -m tensorqtl --covariates <eqtl-covariate-file> --mode trans <subgroup-file-path> <gene-expression-bed-file> <subgroup-result-file>```
-9. To combine all cis-and-trans-eQTL results from logCPM data, run **processParquetResults.R**.
-    - *eQTLDir*: Path to directory where eQTL results are stored (subgroup-result-file).
-    - *cutoff*: Cutoff for significance.
-9. To combine all cis-and-trans-eQTL results from logCPM_PSE data, run **processParquetResultsDiff.R**.
+9. To combine all cis-and-trans-eQTL results, run **processParquetResults.R**.
     - *eQTLDir*: Path to directory where eQTL results are stored (subgroup-result-file).
     - *cutoff*: Cutoff for significance.
 10. To generate combination matrices for eQTL UpSet plots, run **eQTLMatrices.R**.
@@ -109,18 +101,15 @@
 4. Run **convertExpressionToBED_rand.R** and **convertExpressionToBED_rand_diff.R**, changing the following paths as needed:
     - *expr_csv*: Path to the CSV file containing logCPM / pro band-specific expression data.
     - *gtf_path*: Path to the GENCODE reference file.
-    - *geno_prefix_dir*: Path (with prefix) to the PLINK results for a given PA / ASD subgroup.
+    - *geno_prefix*: Path (with prefix) to the PLINK results for a given PA / ASD subgroup.
     - *mergedFile*: Path to the file containing the expression sample to SNP sample mapping.
-    - *out_tsv_dir*: Path to the BED file where you wish to save the gene expression data.
+    - *out_tsv*: Path to the BED file where you wish to save the gene expression data.
 5. Run **formatCovariatesForEqtl_rand.R** and **formatDiffCovariatesForEqtl_rand.R* to format the covariates.
 6. Run **sbatch runEqtlAnalysisRand.sh** in a SLURM environment.
-7. Run **processParquetResults_rand.R** and **processParquetResults_diff_rand.R**, modifying the following:
+7. Run **processParquetResults_rand.R**, modifying the following:
     - *eQTL*: Path to the eQTL results.
 8. Run **calculateJaccard_rand.R**.
-8. Run **jaccardSummaryEqtl.R**, changing the following paths as needed:
-    - *eqtlDir*: Directory where eQTL results are stored.
-    - *refFile*: Path to file where the reference data (annotation BED file) are stored.
-    - *snpFile*: Path to PVAR file. 
+8. Run **jaccardSummaryEqtl.R**.
 
 
 # Running Differential Gene Expression Analysis
@@ -128,7 +117,6 @@
     - *sourceDirGenomics*: Source directory where gene expression data are stored.
     - *phenoGrp*: Source directory where PA /ASD subgroup files are stored.
     - *outDir*: Directory where you wish to store the linear model results.
-    - *siblingDir*: Directory where sibling phenotype data are stored.
 2. To run the linear models for PA / ASD subgroup comparison using logCPM gene expression data, run **linearModels.R**.
     - *sourceDirGenomics*: Source directory where gene expression data are stored.
     - *phenoGrp*: Source directory where PA /ASD subgroup files are stored.
@@ -152,14 +140,12 @@
     - *sourceDirGenomics*: Source directory where gene expression data are stored.
     - *phenoGrp*: Source directory where PA /ASD subgroup files are stored.
     - *outDir*: Directory where you wish to store the linear model results.
-    - *siblingDir*: Directory where the sibling phenotypic data are stored.
 2. To run the linear models for PA / ASD subgroup comparison using logCPM gene expression data, run **linearModelsLitman.R**.
     - *sourceDirGenomics*: Source directory where gene expression data are stored.
     - *phenoGrp*: Source directory where PA /ASD subgroup files are stored.
     - *outDir*: Directory where you wish to store the linear model results.
 3. To generate the heat maps, run **LitmanSubgroupAnalysisAggregated.R**.
     - *sourceDir*: Source directory where the Litman gene sets are stored.
-    - *outDirFinal*: Output directory
 # Consolidating Results for Supplementary Tables
 1. Run **MakeCompositeSuppTables_v2.R**.
     - *diffExprDiffDir*: Path to the directory where the linear models for the standard difference analyses are stored.
@@ -167,7 +153,6 @@
     - *diffVarDiffDir*: Path to the directory where the Levene's test results for the standard difference data are stored.
     - *diffVarRawDir*: Path to the directory where the Levene's test results for the logCPM gne expression data are stored.
     - *litmanDir*: Path to the directory where the GSEA results for the Litman sets are stored.
-2. Run **profoundAutism_LitmanBinaryTable.R**, changing the following values as needed:
-    - *sourceDir*: Directory where the gene sets are stored.
+2. Run **profoundAutism_LitmanBinaryTable.R**.
     
     

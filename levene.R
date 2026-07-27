@@ -32,6 +32,7 @@ levenesTest <- function(sscGroup1, sscGroup2, genomicsGroup1, genomicsGroup2,
                             subtype1, subtype2, fileName){
     formula <- formulaAll
     ssc <- rbind(sscGroup1, sscGroup2)
+    rownames(ssc) <- paste0("X", rownames(ssc))
     gen <- rbind(t(genomicsGroup1), t(genomicsGroup2))
     ssc$subtype <- as.factor(c(rep(subtype1, nrow(sscGroup1)), 
                      rep(subtype2, nrow(sscGroup2))))
@@ -45,6 +46,7 @@ levenesTest <- function(sscGroup1, sscGroup2, genomicsGroup1, genomicsGroup2,
       fullDataSet$gene <- gen[,gene]
       model <- car::leveneTest(gene ~ subtype, fullDataSet)
       return(data.frame(pval = model[["Pr(>F)"]][1],
+                        fStat = model[["F value"]][1],
                         gene = gene))
     })
     pvalues <- do.call(rbind, pvaluesList)
@@ -73,12 +75,6 @@ levenesTest(sscGroup1 = profoundAutismBoth, sscGroup2 = do.call(rbind, list(verb
                                                                                              splitGenomicsGiftedVerbal)),
             subtype1 = "profoundAutismBoth", subtype2 = "notProfound",
             fileName = paste0(outDirFinal, "profoundAutismBoth_NotProfound.csv"))
-levenesTest(sscGroup1 = profoundAutismEither, sscGroup2 = do.call(rbind, list(verbalMildID, verbalNoID, verbalGifted)),
-            genomicsGroup1 = splitGenomicsProfoundEither, genomicsGroup2 = do.call(cbind, list(splitGenomicsMildIDVerbal, 
-                                                                                             splitGenomicsNoIDVerbal,
-                                                                                             splitGenomicsGiftedVerbal)),
-            subtype1 = "profoundAutismEither", subtype2 = "notProfound",
-            fileName = paste0(outDirFinal, "profoundAutismEither_NotProfound.csv"))
 
 # Analyze the "not profound" group.
 nonverbalOnly_notProfound <- read.csv(paste0(outDirFinal, "profoundNonverbalOnly_NotProfound.csv"), row.names = 1)

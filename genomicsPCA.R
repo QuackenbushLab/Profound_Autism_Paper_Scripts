@@ -45,6 +45,11 @@ profoundBothSubsetSSC <- subsetData(profoundAutismBoth, splitGenomicsProfoundBot
 verbalMildIDSubsetSSC <- subsetData(verbalMildID, splitGenomicsMildIDVerbal)
 verbalNoIDSubsetSSC <- subsetData(verbalNoID, splitGenomicsNoIDVerbal)
 verbalGiftedSubsetSSC <- subsetData(verbalGifted, splitGenomicsGiftedVerbal)
+fullDataSSC <- do.call(rbind, list(profoundAutismModerateIDOnlySubsetSSC, profoundAutismNonverbalOnlySubsetSSC,
+                                   profoundBothSubsetSSC, verbalMildIDSubsetSSC,
+                                   verbalNoIDSubsetSSC, verbalGiftedSubsetSSC))
+otherSSC <- do.call(rbind, list(verbalMildIDSubsetSSC,
+                                verbalNoIDSubsetSSC, verbalGiftedSubsetSSC))
 
 plotFirstTwoPCs <- function(pcaSubset){
   # Get PCs.
@@ -78,8 +83,8 @@ dir.create(outDirPCA)
 for(sex in unique(fullDataSSC$sex)){
   pcGenomics <- prcomp(t(fullDataSet[,paste0("X", rownames(fullDataSSC)[which(fullDataSSC$sex == sex)])]))
   str(pcGenomics)
-  saveRDS(pcGenomics, paste0(outDir, "/expressionPCA_", sexCombo, ".RDS"))
-  pcGenomics <- readRDS(paste0(outDir, "/expressionPCA_", sexCombo, ".RDS"))
+  saveRDS(pcGenomics, paste0(outDir, "/expressionPCA_", sex, ".RDS"))
+  pcGenomics <- readRDS(paste0(outDir, "/expressionPCA_", sex, ".RDS"))
 
   # For each pair of PC's, get the ratio of the Euclidean distance between the
   # profound autism samples and from the profound autism samples to the other samples.
@@ -92,38 +97,51 @@ for(sex in unique(fullDataSSC$sex)){
     pcOther <- pcGenomics$x[paste0("X", rownames(otherSSC)[which(otherSSC$sex == sex)]),pc]
     
     # Do a Wilcoxon test on the PC values.
-    wilcoxBoth <- wilcox.test(x = pcProfoundBoth, y = pcOther)$p.value
+    wilcoxBoth <- wilcox.test(x = pcProfoundBoth, y = pcOther, conf.int = TRUE, conf.level = 0.95)
     wilcoxNonverbal <- NA
     tryCatch({
-      wilcoxNonverbal <- wilcox.test(x = pcProfoundNonverbal, y = pcOther)$p.value
+      wilcoxNonverbal <- wilcox.test(x = pcProfoundNonverbal, y = pcOther, conf.int = TRUE, conf.level = 0.95)
     }, error = function(cond){})
-    wilcoxModerateID <- wilcox.test(x = pcProfoundModerateID, y = pcOther)$p.value
+    wilcoxModerateID <- wilcox.test(x = pcProfoundModerateID, y = pcOther, conf.int = TRUE, conf.level = 0.95)
 
     # Return.
-    results <- data.frame(both = wilcoxBoth,
-                          nonverbalOnly = wilcoxNonverbal,
-                          moderateIDOnly = wilcoxModerateID)
+    results <- data.frame(pc = pc,
+                          bothP = wilcoxBoth$p.value,
+                          bothStat = wilcoxBoth$statistic,
+                          bothEstimate = wilcoxBoth$estimate,
+                          bothConfLow = wilcoxBoth$conf.int[1],
+                          bothConfHigh = wilcoxBoth$conf.int[2],
+                          nonverbalOnlyP = wilcoxNonverbal$p.value,
+                          nonverbalOnlyStat = wilcoxNonverbal$statistic,
+                          nonverbalOnlyEstimate = wilcoxNonverbal$estimate,
+                          nonverbalOnlyConfLow = wilcoxNonverbal$conf.int[1],
+                          nonverbalOnlyConfHigh = wilcoxNonverbal$conf.int[2],
+                          moderateIDOnlyP = wilcoxModerateID$p.value,
+                          moderateIDOnlyStat = wilcoxModerateID$statistic,
+                          moderateIDOnlyEstimate = wilcoxModerateID$estimate,
+                          moderateIDOnlyConfLow = wilcoxModerateID$conf.int[1],
+                          moderateIDOnlyConfHigh = wilcoxModerateID$conf.int[2])
     return(results)
   })
   pvals <- do.call(rbind, ratiosList)
-  pvals$padjBoth <- p.adjust(pvals$both, method = "fdr")
-  pvals$padjNonverbal <- p.adjust(pvals$nonverbalOnly, method = "fdr")
-  pvals$padjModerateID <- p.adjust(pvals$moderateIDOnly, method = "fdr")
+  pvals$padjBoth <- p.adjust(pvals$bothP, method = "fdr")
+  pvals$padjNonverbal <- p.adjust(pvals$nonverbalOnlyP, method = "fdr")
+  pvals$padjModerateID <- p.adjust(pvals$moderateIDOnlyP, method = "fdr")
 
   # Save values.
   write.csv(pvals, paste0(outDirPCA, "/profoundPCADistribution_", sex, ".csv"))
   
   # Plot PCs.
   plotFirstTwoPCs(pcaSubset = pcGenomics)
-  
+
   # Plot p-values.
-  hist(as.numeric(pvals$padjBoth), breaks = seq(0, 1, by = 0.05), 
+  hist(as.numeric(pvals$padjBoth), breaks = seq(0, 1, by = 0.05),
        xlab = "FDR-Adjusted P-Value for PC Separability",
        ylab = "Number of PCs", xlim = c(0, 1), ylim = c(0, length(pcGenomics$sdev)),
        col = bothCol, main = "")
   tryCatch({
     hist(as.numeric(pvals$padjNonverbal), breaks = seq(0, 1, by = 0.05), col = nonverbalCol, add = TRUE)
   }, error = function(cond){})
-  hist(as.numeric(pvals$padjModerateID), breaks = seq(0, 1, by = 0.05), col = modIDCol, add = TRUE) 
+  hist(as.numeric(pvals$padjModerateID), breaks = seq(0, 1, by = 0.05), col = modIDCol, add = TRUE)
 }
 dev.off()

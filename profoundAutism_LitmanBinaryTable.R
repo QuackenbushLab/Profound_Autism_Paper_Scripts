@@ -1,5 +1,5 @@
 # Read in all of the Litman files.
-sourceDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/Litman_gene_sets"
+sourceDir <- NULL
 asdRiskGenes <- read.table(paste0(sourceDir, "/ASD_risk_genes_TADA_FDR0.3.bed"), sep = "\t",
                            header = TRUE)$name
 constrainedPLIScore <- read.table(paste0(sourceDir, "/Constrained_PLIScoreOver0.9.bed"), sep = "\t",

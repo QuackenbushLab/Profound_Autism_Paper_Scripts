@@ -54,7 +54,8 @@ verbalGifted <- binAge(verbalGifted)
 # Subset SSC data.
 # We do not adjust for race or ethnicity because we are comparing against siblings.
 # We do adjust for sex of sibling and proband.
-siblingData <- read.csv("/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/SSC\ Version\ 15.3\ Phenotype\ Dataset/Designated\ Unaffected\ Sibling\ Data/ssc_core_descriptive.csv",
+siblingDir <- NULL
+siblingData <- read.csv(paste0(siblingDir, "/ssc_core_descriptive.csv"),
                         row.names = 1)
 rownames(siblingData) <- unlist(lapply(rownames(siblingData), function(row){
   return(paste0(strsplit(row, ".s1")[[1]][1], ".p1"))
@@ -87,35 +88,36 @@ runLinearModels <- function(sscGroup1, sscGroup2, genomicsGroup1, genomicsGroup2
     print(length(intersect(rownames(sscGroup1), colnames(genomicsGroup1))))
     print(length(intersect(rownames(sscGroup2), colnames(genomicsGroup2))))
     
-    # ssc <- rbind(sscGroup1, sscGroup2)
-    # gen <- rbind(t(genomicsGroup1), t(genomicsGroup2))
-    # ssc$subtype <- c(rep(subtype1, nrow(sscGroup1)), 
-    #                  rep(subtype2, nrow(sscGroup2)))
-    # shared <- intersect(rownames(ssc), rownames(gen))
-    # shared <- Reduce(intersect, list(shared, rownames(ssc)[which(ssc$ethnicity != "")],
-    #                                  rownames(ssc)[which(ssc$race != "not-specified")]))
-    # ssc <- ssc[shared,]
-    # gen <- gen[shared,]
-    # str(ssc)
-    # str(gen)
-    # pvaluesList <- lapply(colnames(gen), function(gene){
-    #   fullDataSet <- ssc
-    #   fullDataSet$gene <- gen[,gene]
-    #   toreturn <- NULL
-    #   tryCatch({
-    #     model <- lm(formula = formula, data = fullDataSet)
-    #     toreturn <- as.data.frame(t(data.frame(model[["coefficients"]])))
-    #     toreturn$gene <- gene
-    #     toreturn$pval <- summary(model)$coefficients[2,4]
-    #     toreturn$stdError <- summary(model)$coefficients[2,2]
-    #     toreturn$rsq <- summary(model)$r.squared
-    #   }, error = function(cond){print(cond)})
-    #   return(toreturn)
-    # })
-    # pvalues <- do.call(rbind, pvaluesList)
-    # pvalues$padj <- stats::p.adjust(pvalues$pval, method = "fdr")
-    # str(pvalues[which(pvalues$padj < 0.05), "gene"])
-    # write.csv(pvalues, fileName)
+    ssc <- rbind(sscGroup1, sscGroup2)
+    gen <- rbind(t(genomicsGroup1), t(genomicsGroup2))
+    ssc$subtype <- c(rep(subtype1, nrow(sscGroup1)),
+                     rep(subtype2, nrow(sscGroup2)))
+    shared <- intersect(rownames(ssc), rownames(gen))
+    shared <- Reduce(intersect, list(shared, rownames(ssc)[which(ssc$ethnicity != "")],
+                                     rownames(ssc)[which(ssc$race != "not-specified")]))
+    ssc <- ssc[shared,]
+    gen <- gen[shared,]
+    pvaluesList <- lapply(colnames(gen), function(gene){
+      fullDataSet <- ssc
+      fullDataSet$gene <- gen[,gene]
+      model <- lm(formula = formula, data = fullDataSet)
+      toreturn <- as.data.frame(t(data.frame(model[["coefficients"]])))
+      toreturn$gene <- gene
+      toreturn$pval <- summary(model)$coefficients[2,4]
+      toreturn$stdError <- summary(model)$coefficients[2,2]
+      toreturn$rsq <- summary(model)$r.squared
+      # Beta value and confidence intervals
+      parmName <- names(coef(model))[which(grepl("subtype", names(coef(model))) == TRUE)]
+      ci <- confint(model, parmName, level = 0.95)
+      toreturn$ciLow <- ci[1]
+      toreturn$ciHigh <- ci[2]
+      return(toreturn)
+    })
+    pvalues <- do.call(rbind, pvaluesList)
+    pvalues$padj <- stats::p.adjust(pvalues$pval, method = "fdr")
+    str(pvalues)
+    str(pvalues[which(pvalues$padj < 0.05), "gene"])
+    write.csv(pvalues, fileName)
 }
 
 # Compare the profound autism groups to the other groups.
@@ -149,16 +151,6 @@ runLinearModels(profoundBothSubsetSSC, verbalNoIDSubsetSSC, splitGenomicsProfoun
 runLinearModels(profoundBothSubsetSSC, verbalGiftedSubsetSSC, splitGenomicsProfoundBoth,
                 splitGenomicsGiftedVerbal, "profoundBoth", "giftedVerbal",
                 paste0(outDirFinal, "profoundBoth_GiftedVerbal.csv"))
-runLinearModels(sscGroup1 = profoundEitherSubsetSSC, sscGroup2 = verbalMildIDSubsetSSC, 
-                genomicsGroup1 = splitGenomicsProfoundEither, genomicsGroup2 = splitGenomicsMildIDVerbal, 
-                subtype1 = "profoundEither", subtype2 = "mildIDVerbal",
-                fileName = paste0(outDirFinal, "profoundEither_MildIDVerbal.csv"))
-runLinearModels(profoundEitherSubsetSSC, verbalNoIDSubsetSSC, splitGenomicsProfoundEither,
-                splitGenomicsNoIDVerbal, "profoundEither", "noIDVerbal",
-                paste0(outDirFinal, "profoundEither_NoIDVerbal.csv"))
-runLinearModels(profoundEitherSubsetSSC, verbalGiftedSubsetSSC, splitGenomicsProfoundEither,
-                splitGenomicsGiftedVerbal, "profoundEither", "giftedVerbal",
-                paste0(outDirFinal, "profoundEither_GiftedVerbal.csv"))
 
 # Compare the profound autism groups to each other.
 runLinearModels(sscGroup1 = profoundAutismModerateIDOnlySubsetSSC, sscGroup2 = profoundAutismNonverbalOnlySubsetSSC, 
@@ -173,15 +165,3 @@ runLinearModels(sscGroup1 = profoundAutismNonverbalOnlySubsetSSC, sscGroup2 = pr
                 genomicsGroup1 = splitGenomicsProfoundNonverbalOnly, genomicsGroup2 = splitGenomicsProfoundBoth, 
                 subtype1 = "profoundNonverbalOnly", subtype2 = "profoundBoth",
                 fileName = paste0(outDirFinal, "profoundNonverbalOnly_ProfoundBoth.csv"))
-runLinearModels(sscGroup1 = profoundAutismNonverbalOnlySubsetSSC, sscGroup2 = profoundEitherSubsetSSC, 
-                genomicsGroup1 = splitGenomicsProfoundNonverbalOnly, genomicsGroup2 = splitGenomicsProfoundEither, 
-                subtype1 = "profoundNonverbalOnly", subtype2 = "profoundEither",
-                fileName = paste0(outDirFinal, "profoundNonverbalOnly_ProfoundEither.csv"))
-runLinearModels(sscGroup1 = profoundAutismModerateIDOnlySubsetSSC, sscGroup2 = profoundEitherSubsetSSC, 
-                genomicsGroup1 = splitGenomicsProfoundModerateIDOnly, genomicsGroup2 = splitGenomicsProfoundEither, 
-                subtype1 = "profoundModerateIDOnly", subtype2 = "profoundEither",
-                fileName = paste0(outDirFinal, "profoundModerateIDOnly_ProfoundEither.csv"))
-runLinearModels(sscGroup1 = profoundBothSubsetSSC, sscGroup2 = profoundEitherSubsetSSC, 
-                genomicsGroup1 = splitGenomicsProfoundBoth, genomicsGroup2 = splitGenomicsProfoundEither, 
-                subtype1 = "profoundBoth", subtype2 = "profoundEither",
-                fileName = paste0(outDirFinal, "profoundBoth_ProfoundEither.csv"))

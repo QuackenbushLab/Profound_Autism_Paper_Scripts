@@ -1,6 +1,6 @@
 library(biomaRt)
 
-eqtlDir <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/eQTL/"
+eqtlDir <- NULL
 jaccardLogCPM <- readRDS(paste0(eqtlDir, "jaccardRandLogCPM.RDS"))
 jaccardDiff <- readRDS(paste0(eqtlDir, "jaccardRandDiff.RDS"))
 
@@ -23,8 +23,10 @@ sharedDiffCis <- findShared(jaccardDiff$overlappingPairsCis)
 sharedDiffTrans <- findShared(jaccardDiff$overlappingPairsTrans)
 
 # Read in the reference.
-ref <- as.data.frame(fread("/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/gencode.v49.annotation.bed"))
-snpPvar <- as.data.frame(fread("/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/SSC_Omni2.5.profoundAll.pvar"))
+refFile <- NULL
+ref <- as.data.frame(fread(refFile))
+snpFile <- NULL
+snpPvar <- as.data.frame(fread(snpFile))
 rownames(snpPvar) <- snpPvar$ID
 
 # Map each SNP.

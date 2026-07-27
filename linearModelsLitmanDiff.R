@@ -54,7 +54,8 @@ verbalGifted <- binAge(verbalGifted)
 # Subset SSC data.
 # We do not adjust for race or ethnicity because we are comparing against siblings.
 # We do adjust for sex of sibling and proband.
-siblingData <- read.csv("/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/SSC\ Version\ 15.3\ Phenotype\ Dataset/Designated\ Unaffected\ Sibling\ Data/ssc_core_descriptive.csv",
+siblingDir <- NULL
+siblingData <- read.csv(paste0(siblingDir, "/ssc_core_descriptive.csv"),
                         row.names = 1)
 rownames(siblingData) <- unlist(lapply(rownames(siblingData), function(row){
   return(paste0(strsplit(row, ".s1")[[1]][1], ".p1"))

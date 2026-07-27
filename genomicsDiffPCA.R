@@ -35,7 +35,8 @@ otherData <- do.call(cbind, list(splitGenomicsMildIDVerbal,
 # Subset SSC data.
 # We do not adjust for race or ethnicity because we are comparing against siblings.
 # We do adjust for sex of sibling and proband.
-siblingData <- read.csv("/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/SSC\ Version\ 15.3\ Phenotype\ Dataset/Designated\ Unaffected\ Sibling\ Data/ssc_core_descriptive.csv",
+siblingDir <- NULL
+siblingData <- read.csv(paste0(siblingDir, "/ssc_core_descriptive.csv"),
                         row.names = 1)
 rownames(siblingData) <- unlist(lapply(rownames(siblingData), function(row){
   return(paste0(strsplit(row, ".s1")[[1]][1], ".p1"))
@@ -66,8 +67,8 @@ otherSSC <- do.call(rbind, list(verbalMildIDSubsetSSC,
                                    verbalNoIDSubsetSSC, verbalGiftedSubsetSSC))
 
 # Do PCA.
-inDirPCA <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/diffGeneExpressionSubsets/"
-outDirPCA <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/PCA/"
+inDirPCA <- NULL
+outDirPCA <- NULL
 dir.create(outDirPCA)
 plotFirstTwoPCs <- function(pcaSubset){
   # Get PCs.
@@ -104,47 +105,65 @@ for(sexCombo in unique(fullDataSSC$sexCombination)){
   ratiosList <- lapply(1:ncol(pcGenomics$x), function(pc){
     
     # Get PCs.
-    pcProfoundBoth <- pcGenomics$x[paste0("X", rownames(profoundBothSubsetSSC)[which(profoundBothSubsetSSC$sexCombination == sexCombo)]),pc]
+    bothSamp <- intersect(paste0("X", rownames(profoundBothSubsetSSC)[which(profoundBothSubsetSSC$sexCombination == sexCombo)]), rownames(pcGenomics$x))
+    nonverbalSamp <- intersect(paste0("X", rownames(profoundAutismNonverbalOnlySubsetSSC)[which(profoundAutismNonverbalOnlySubsetSSC$sexCombination == sexCombo)]), rownames(pcGenomics$x))
+    idSamp <- intersect(paste0("X", rownames(profoundAutismModerateIDOnlySubsetSSC)[which(profoundAutismModerateIDOnlySubsetSSC$sexCombination == sexCombo)]), rownames(pcGenomics$x))
+    otherSamp <- intersect(paste0("X", rownames(otherSSC)[which(otherSSC$sexCombination == sexCombo)]), rownames(pcGenomics$x))
+
+    pcProfoundBoth <- pcGenomics$x[bothSamp,pc]
     tryCatch({
-      pcProfoundNonverbal <- pcGenomics$x[paste0("X", rownames(profoundAutismNonverbalOnlySubsetSSC)[which(profoundAutismNonverbalOnlySubsetSSC$sexCombination == sexCombo)]),pc]
+      pcProfoundNonverbal <- pcGenomics$x[nonverbalSamp,pc]
     }, error = function(cond){print(cond)})
-    pcProfoundModerateID <- pcGenomics$x[paste0("X", rownames(profoundAutismModerateIDOnlySubsetSSC)[which(profoundAutismModerateIDOnlySubsetSSC$sexCombination == sexCombo)]),pc]
-    pcOther <- pcGenomics$x[paste0("X", rownames(otherSSC)[which(otherSSC$sexCombination == sexCombo)]),pc]
+    pcProfoundModerateID <- pcGenomics$x[idSamp,pc]
+    pcOther <- pcGenomics$x[otherSamp,pc]
     
     # Do a Wilcoxon test on the PC values.
-    wilcoxBoth <- wilcox.test(x = pcProfoundBoth, y = pcOther)$p.value
-    wilcoxNonverbal <- NA
+    wilcoxBoth <- wilcox.test(x = pcProfoundBoth, y = pcOther, conf.int = TRUE, conf.level = 0.95)
+    wilcoxNonverbal <- list(p.value = NA, statistic = NA, conf.int = c(NA, NA), estimate = NA)
     tryCatch({
-      wilcoxNonverbal <- wilcox.test(x = pcProfoundNonverbal, y = pcOther)$p.value
-    }, error = function(cond){print(cond)})
-    wilcoxModerateID <- wilcox.test(x = pcProfoundModerateID, y = pcOther)$p.value
-
+      wilcoxNonverbal <- wilcox.test(x = pcProfoundNonverbal, y = pcOther, conf.int = TRUE, conf.level = 0.95)
+    }, error = function(cond){})
+    wilcoxModerateID <- wilcox.test(x = pcProfoundModerateID, y = pcOther, conf.int = TRUE, conf.level = 0.95)
+    str(wilcoxBoth$p.value)
+    
     # Return.
-    results <- data.frame(both = wilcoxBoth,
-                          nonverbalOnly = wilcoxNonverbal,
-                          moderateIDOnly = wilcoxModerateID)
+    results <- data.frame(bothP = wilcoxBoth$p.value,
+                          bothStat = wilcoxBoth$statistic,
+                          bothEstimate = wilcoxBoth$estimate,
+                          bothConfLow = wilcoxBoth$conf.int[1],
+                          bothConfHigh = wilcoxBoth$conf.int[2],
+                          nonverbalOnlyP = wilcoxNonverbal$p.value,
+                          nonverbalOnlyStat = wilcoxNonverbal$statistic,
+                          nonverbalOnlyEstimate = wilcoxNonverbal$estimate,
+                          nonverbalOnlyConfLow = wilcoxNonverbal$conf.int[1],
+                          nonverbalOnlyConfHigh = wilcoxNonverbal$conf.int[2],
+                          moderateIDOnlyP = wilcoxModerateID$p.value,
+                          moderateIDOnlyStat = wilcoxModerateID$statistic,
+                          moderateIDOnlyEstimate = wilcoxModerateID$estimate,
+                          moderateIDOnlyConfLow = wilcoxModerateID$conf.int[1],
+                          moderateIDOnlyConfHigh = wilcoxModerateID$conf.int[2])
     return(results)
   })
   pvals <- do.call(rbind, ratiosList)
-  pvals$padjBoth <- p.adjust(pvals$both, method = "fdr")
-  pvals$padjNonverbal <- p.adjust(pvals$nonverbalOnly, method = "fdr")
-  pvals$padjModerateID <- p.adjust(pvals$moderateIDOnly, method = "fdr")
+  pvals$padjBoth <- p.adjust(pvals$bothP, method = "fdr")
+  pvals$padjNonverbal <- p.adjust(pvals$nonverbalOnlyP, method = "fdr")
+  pvals$padjModerateID <- p.adjust(pvals$moderateIDOnlyP, method = "fdr")
 
   # Save values.
   write.csv(pvals, paste0(outDirPCA, "/profoundPCADistribution_", sexCombo, ".csv"))
-  
+
   # Plot PCs.
   plotFirstTwoPCs(pcaSubset = pcGenomics)
 
   # Plot p-values.
-  hist(as.numeric(pvals$padjBoth), breaks = seq(0, 1, by = 0.05), 
+  hist(as.numeric(pvals$padjBoth), breaks = seq(0, 1, by = 0.05),
        xlab = "FDR-Adjusted P-Value for PC Separability",
        ylab = "Number of PCs", xlim = c(0, 1), ylim = c(0, length(pcGenomics$sdev)),
        col = bothCol, main = "")
   tryCatch({
     hist(as.numeric(pvals$padjNonverbal), breaks = seq(0, 1, by = 0.05), col = nonverbalCol, add = TRUE)
   }, error = function(cond){})
-  hist(as.numeric(pvals$padjModerateID), breaks = seq(0, 1, by = 0.05), col = modIDCol, add = TRUE) 
+  hist(as.numeric(pvals$padjModerateID), breaks = seq(0, 1, by = 0.05), col = modIDCol, add = TRUE)
 
 }
 dev.off()

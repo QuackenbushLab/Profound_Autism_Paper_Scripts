@@ -123,7 +123,7 @@ names(cellMarkersAggUnique) <- names(cellMarkersAgg)
 cellMarkersAggUnique <- cellMarkersAggUnique[c(1:5, 8:20)]
 
 # Read results.
-outDirFinal <- "/Users/tae771/Library/CloudStorage/OneDrive-HarvardUniversity/Documents/postdoc/SFARI/profoundAutism/diffGeneExpression_ageBinned/"
+outDirFinal <- NULL
 iq1 <- read.csv(paste0(outDirFinal, "IQ1_nonverbalToBoth.csv"), row.names = 1)
 iq2 <- read.csv(paste0(outDirFinal, "IQ2_mildToModerate.csv"), row.names = 1)
 iq3 <- read.csv(paste0(outDirFinal, "IQ3_noToMild.csv"), row.names = 1)

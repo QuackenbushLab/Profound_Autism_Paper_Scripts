@@ -88,10 +88,15 @@ allFacStats <- do.call(rbind, lapply(c("africanAmerican", "asian", "multiracial"
     colnames(dat) <- c(paste0("yes_", factor), paste0("no_", factor))
     fishLess <- stats::fisher.test(dat, alternative = "less")
     fishMore <- stats::fisher.test(dat, alternative = "greater")
-    return(data.frame(fishersLess = fishLess$p.value, fishersMore = fishMore$p.value,
+    return(data.frame(fishersLessP = fishLess$p.value, fishersLessOddsRatio = fishLess$estimate,
+                      fishersLessOddsRatioConfLow = fishLess$conf.int[1],
+                      fishersLessOddsRatioConfHigh = fishLess$conf.int[2],
+                      fishersMoreP = fishMore$p.value, fishersMoreOddsRatio = fishMore$estimate,
+                      fishersMoreOddsRatioConfLow = fishMore$conf.int[1],
+                      fishersMoreOddsRatioConfHigh = fishMore$conf.int[2],
                       factor = factor, iqRange = allData[i, "iqRange"],
                       expressiveLanguage = allData[i, "expressiveLanguage"]))
   }))
   return(facStats)
 }))
-write.csv(allFacStats, paste0(outDir, "/fishersTestsAbove8.csv"), row.names = FALSE)
+write.csv(allFacStats, paste0(outDir, "/fishersTestsAbove8Stats.csv"), row.names = FALSE)
